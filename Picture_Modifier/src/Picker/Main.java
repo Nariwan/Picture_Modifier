@@ -19,7 +19,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
 
 
-        primaryStage.setTitle("Data Picker!");
+        primaryStage.setTitle("Picture Modifier!");
         // OpenCV Startup thing
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
