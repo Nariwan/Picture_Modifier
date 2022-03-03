@@ -4,23 +4,26 @@ Self written Java application which converts coloured pictures to binary picture
 
 # What is required?
 It's based on Java and JavaFX, so a JavaFX installation is required.
-There's a module-info.java included which should help to run it.
+<br/>There's a module-info.java included which should help to run it.
 
-OpenCV is also needed.
+<br/>OpenCV is also needed.
 
 # What does it do?
 With this short application, someone is able to convert picture into binary ( B/W ) pictures.
-It's easy to pick the threshold at which the conversion should take place, and it's also
+<br/>It's easy to pick the threshold at which the conversion should take place, and it's also
 possible to name the outcome file.
 
 # Where is the outcome file?
-It's in the folder of the project.
-For Linux i.e :
-"/home/<username>/IdeaProjects/Picture_Modifier"
+It's in the folder of the project. 
+<br/>For Linux : "/home/'UserName'/"Project Folder"/Picture_Modifier"
+<br/>For Windows : "\\"Path to project Folder"\Picture_Modifier"
+<br/>("C:\User\\'UserName'\Ideaprojects\Pocture_Modifier") <- as example
+<br/>For mac :
+<br/>Don't own one, so don't know.
 
 # Used IDE
   Don't know if this is needed, yet it has been written in IntelliJ.
-
+  
 # Any future plans?
   Adding chromatic aberration would be neat.
-  Also threshold field input check.  
+  <br/>Also threshold field input check.  
