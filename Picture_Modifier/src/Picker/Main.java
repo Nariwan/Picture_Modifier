@@ -24,11 +24,11 @@ public class Main extends Application {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
         Scene_FX_Pane.styleProperty().set("-fx-background-color: BLACK; -fx-border-color: BLACK;");
-        Scene_FX_Pane.prefHeight(300);
-        Scene_FX_Pane.prefWidth(480);
+        Scene_FX_Pane.prefHeight(1280);
+        Scene_FX_Pane.prefWidth(720);
 
 
-        Scene_FX_Var = new Scene(Scene_FX_Pane, 300,480);
+        Scene_FX_Var = new Scene(Scene_FX_Pane, 1280,720);
 
 
         primaryStage.setScene(Scene_FX_Var);
