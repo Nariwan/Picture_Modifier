@@ -1,6 +1,6 @@
 # Picture_Modifier
 Self written Java application which converts coloured pictures to binary pictures via OpenCV.
-![Screenshot_2022-03-03_14-30-05](https://user-images.githubusercontent.com/100850491/156575212-e53dcbc7-197f-4f6c-91b6-c8802a1d5ce0.png)
+![Preview](https://raw.githubusercontent.com/Nariwan/Picture_Modifier/main/Preview.png)
 
 # What is required?
 It's based on Java and JavaFX, so a JavaFX installation is required.
