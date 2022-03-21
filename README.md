@@ -26,4 +26,4 @@ It's in the folder of the project.
   
 # Any future plans?
   Adding chromatic aberration would be neat.
-  <br/>Also threshold field input check.  
+  <br/> 
