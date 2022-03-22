@@ -3,7 +3,6 @@ package Picker;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.chart.PieChart;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -23,12 +22,12 @@ public class Main extends Application {
         // OpenCV Startup thing
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
-        Scene_FX_Pane.styleProperty().set("-fx-background-color: BLACK; -fx-border-color: BLACK;");
         Scene_FX_Pane.prefHeight(1280);
         Scene_FX_Pane.prefWidth(720);
 
 
         Scene_FX_Var = new Scene(Scene_FX_Pane, 1280,720);
+        Scene_FX_Var.getStylesheets().add("Style.css");
 
 
         primaryStage.setScene(Scene_FX_Var);

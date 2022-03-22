@@ -3,15 +3,18 @@ package Picker;
 
 // Imported Libraries
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
@@ -35,23 +38,23 @@ public class DataChooseFunction {
     private static FileChooser DataChoose;
     private static File DataVar;
     private static Button Button_PickFile, Button_For_Saving_The_Pic, Button_For_Exit;
-    private static Label sPath_Label, ThresDescription_Label, NameDesc_Label;
+    private static Label sPath_Label, ThresDescription_Label, CheckBox_Label, Norm_Min_Label, Norm_Max_Label, NameDesc_Label;
     private static boolean HasPic;
     private static boolean b_Is_ImageView_Setup = false;
+    private static boolean b_Normalise_Picture = false;
 
     private static InputStream Stream_Input;
     private static ImageView Show_Image;
 
     public static TextField NameGiver_txtField;
-    public static Slider Slider_Threshold;
+    public static Slider Slider_Threshold, Slider_Norm_Min, Slider_Norm_Max;
+    private static CheckBox Chkbx_Normalise;
 
     // Constructor of the Chooser
     public DataChooseFunction(){
 
-        String btn_Format = "-fx-background-color: #1C1A1A; -fx-text-fill: red; -fx-font-size: 16px;";
-        String txt_Format = "-fx-background-color: #1C1A1A; -fx-text-fill: yellow; -fx-font-size: 16px;";
-        int Y_Pos = 30;
-        double NameGiver_txtField_Width = Scene_FX_Pane.getWidth()/3;
+        int Y_Pos = 20;
+        double NameGiver_txtField_Width = Scene_FX_Pane.getWidth()/4;
 
         // Did the layout, window, already got created?
         if(!DataPickCriteria){
@@ -62,9 +65,8 @@ public class DataChooseFunction {
             ThresDescription_Label.setPrefWidth(145);
             ThresDescription_Label.setLayoutX(10);
             ThresDescription_Label.setLayoutY(Y_Pos);
-            ThresDescription_Label.setTextFill(Color.YELLOW);
 
-            // Text field to input the Threshold
+            // Slider to pick the Threshold
             Slider_Threshold = new Slider();
             Slider_Threshold.setPrefWidth(170);
             Slider_Threshold.setLayoutX(150);
@@ -74,29 +76,97 @@ public class DataChooseFunction {
             Slider_Threshold.setValue(100.0);
             Slider_Threshold.setBlockIncrement(0.1f);
 
-            ThresDescription_Label.setText("Threshold : "+ String.format("%.2f",Slider_Threshold.getValue()));
-
+            // Event Handler for the Threshold Slider
             Slider_Threshold.valueProperty().addListener((observable, oldValue, newValue) -> {
                 if(HasPic){
                     Threshold_Image_Refresh(DataVar);
                 }
                 ThresDescription_Label.setText("Threshold : "+ String.format("%.2f",Slider_Threshold.getValue()));
             });
+            // Setup the Text first
+            ThresDescription_Label.setText("Threshold : "+ String.format("%.2f",Slider_Threshold.getValue()));
 
+            // Desc. for the CheckBox
+            CheckBox_Label = new Label("Normalise");
+            CheckBox_Label.setPrefWidth(80);
+            CheckBox_Label.setLayoutX(10);
+            CheckBox_Label.setLayoutY(Y_Pos+30);
+
+            // Setup for the CheckBox
+            Chkbx_Normalise = new CheckBox();
+            Chkbx_Normalise.setLayoutX(90);
+            Chkbx_Normalise.setLayoutY(Y_Pos+30);
+            Chkbx_Normalise.setPrefWidth(5);
+            Chkbx_Normalise.setPrefHeight(5);
+
+            // Event Handler for the Checkbox
+            Chkbx_Normalise.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+                b_Normalise_Picture = !b_Normalise_Picture;
+                if(HasPic){Threshold_Image_Refresh(DataVar);}
+            });
+
+            // Desc. for Normalise_Min_Value
+            Norm_Min_Label = new Label("Min :");
+            Norm_Min_Label.setPrefWidth(100);
+            Norm_Min_Label.setLayoutX(130);
+            Norm_Min_Label.setLayoutY(Y_Pos+30);
+
+            // Slider to set the Min_Norm Value
+            Slider_Norm_Min = new Slider();
+            Slider_Norm_Min.setPrefWidth(170);
+            Slider_Norm_Min.setLayoutX(225);
+            Slider_Norm_Min.setLayoutY(Y_Pos+30);
+            Slider_Norm_Min.setMax(255.0);
+            Slider_Norm_Min.setMin(0.0);
+            Slider_Norm_Min.setValue(100.0);
+            Slider_Norm_Min.setBlockIncrement(0.1f);
+
+            // Event Handler for the Min Norm Slider
+            Slider_Norm_Min.valueProperty().addListener((observable, oldValue, newValue) -> {
+                if(HasPic){
+                    Threshold_Image_Refresh(DataVar);
+                }
+                Norm_Min_Label.setText("Min : "+ String.format("%.2f",Slider_Norm_Min.getValue()));
+            });
+            Norm_Min_Label.setText("Min : "+ String.format("%.2f",Slider_Norm_Min.getValue()));
+
+            // Desc. for Normalise_Max_Value
+            Norm_Max_Label = new Label("Max :");
+            Norm_Max_Label.setPrefWidth(100);
+            Norm_Max_Label.setLayoutX(400);
+            Norm_Max_Label.setLayoutY(Y_Pos+30);
+            Norm_Max_Label.setTextFill(Color.YELLOW);
+
+            // Slider to set the Max_Norm Value
+            Slider_Norm_Max = new Slider();
+            Slider_Norm_Max.setPrefWidth(170);
+            Slider_Norm_Max.setLayoutX(500);
+            Slider_Norm_Max.setLayoutY(Y_Pos+30);
+            Slider_Norm_Max.setMax(255.0);
+            Slider_Norm_Max.setMin(0.0);
+            Slider_Norm_Max.setValue(100.0);
+            Slider_Norm_Max.setBlockIncrement(0.1f);
+
+            // Event Handler for the Max Norm Slider
+            Slider_Norm_Max.valueProperty().addListener((observable, oldValue, newValue) -> {
+                if(HasPic){
+                    Threshold_Image_Refresh(DataVar);
+                }
+                Norm_Max_Label.setText("Max : "+ String.format("%.2f",Slider_Norm_Max.getValue()));
+            });
+            Norm_Max_Label.setText("Max : "+ String.format("%.2f",Slider_Norm_Max.getValue()));
 
             // Desc. for Save-Name Label
             NameDesc_Label = new Label("Save Name");
-            NameDesc_Label.setPrefWidth(90);
+            NameDesc_Label.setPrefWidth(95);
             NameDesc_Label.setLayoutY(Y_Pos);
             NameDesc_Label.setLayoutX(350);
-            NameDesc_Label.setTextFill(Color.YELLOW);
 
             // The input field of how to name the Output File
             NameGiver_txtField = new TextField("Test.png");
             NameGiver_txtField.setPrefWidth(NameGiver_txtField_Width);
             NameGiver_txtField.setLayoutX(460);
             NameGiver_txtField.setLayoutY(Y_Pos-5);
-            NameGiver_txtField.setStyle((txt_Format));
 
 
 
@@ -128,7 +198,7 @@ public class DataChooseFunction {
             sPath_Label.setText("NO FILE!!");
             sPath_Label.setTextFill(Color.YELLOW);
             sPath_Label.setLayoutX(10);
-            sPath_Label.setLayoutY(Y_Pos+40);
+            sPath_Label.setLayoutY(Y_Pos+60);
 
             /*
                 The button, and boolean, for the File picker.
@@ -137,9 +207,8 @@ public class DataChooseFunction {
             Button_PickFile = new Button();
             Button_PickFile.setText("Pick Image");
             Button_PickFile.setPrefWidth(130);
-            Button_PickFile.setLayoutX(900);
+            Button_PickFile.setLayoutX(800);
             Button_PickFile.setLayoutY(Y_Pos-5);
-            Button_PickFile.setStyle((btn_Format));
 
             /*
                 Now we get to the function of the Button, what happens
@@ -177,7 +246,6 @@ public class DataChooseFunction {
             Button_For_Saving_The_Pic.setPrefWidth(100);
             Button_For_Saving_The_Pic.setLayoutX(1040);
             Button_For_Saving_The_Pic.setLayoutY(Y_Pos-5);
-            Button_For_Saving_The_Pic.setStyle((btn_Format));
 
             /*
                 What happens, if the Modify button gets clicked?
@@ -205,7 +273,6 @@ public class DataChooseFunction {
             Button_For_Exit.setPrefWidth(100);
             Button_For_Exit.setLayoutX(1160);
             Button_For_Exit.setLayoutY(Y_Pos-5);
-            Button_For_Exit.setStyle((btn_Format));
 
             /*
                 If clicked -> Exit
@@ -223,6 +290,12 @@ public class DataChooseFunction {
             DataGroup_For_FXPane.getChildren().add(NameGiver_txtField);
             DataGroup_For_FXPane.getChildren().add(ThresDescription_Label);
             DataGroup_For_FXPane.getChildren().add(NameDesc_Label);
+            DataGroup_For_FXPane.getChildren().add(Chkbx_Normalise);
+            DataGroup_For_FXPane.getChildren().add(CheckBox_Label);
+            DataGroup_For_FXPane.getChildren().add(Norm_Max_Label);
+            DataGroup_For_FXPane.getChildren().add(Norm_Min_Label);
+            DataGroup_For_FXPane.getChildren().add(Slider_Norm_Min);
+            DataGroup_For_FXPane.getChildren().add(Slider_Norm_Max);
 
             DataPickCriteria = true;
         }
@@ -301,9 +374,17 @@ public class DataChooseFunction {
     private static void Just_Modify(Mat GrayMe){
         Mat BufferMat = new Mat();
         String String_to_File = StringTEST_And_Prepare("TempPic");
-        Imgproc.cvtColor(GrayMe, BufferMat, Imgproc.COLOR_BGR2GRAY);
-        Imgproc.threshold(BufferMat, GrayMe,Slider_Threshold.getValue(), 255, Imgproc.THRESH_BINARY);
-        Imgcodecs.imwrite(String_to_File, GrayMe);
+
+        if(b_Normalise_Picture){
+            Core.normalize(GrayMe, BufferMat,Slider_Norm_Min.getValue(), Slider_Norm_Max.getValue(), Core.NORM_MINMAX);
+            Imgproc.cvtColor(BufferMat, GrayMe, Imgproc.COLOR_BGR2GRAY);
+            Imgproc.threshold(GrayMe, BufferMat,Slider_Threshold.getValue(), 255, Imgproc.THRESH_BINARY);
+            Imgcodecs.imwrite(String_to_File, BufferMat);
+        } else {
+            Imgproc.cvtColor(GrayMe, BufferMat, Imgproc.COLOR_BGR2GRAY);
+            Imgproc.threshold(BufferMat, GrayMe, Slider_Threshold.getValue(), 255, Imgproc.THRESH_BINARY);
+            Imgcodecs.imwrite(String_to_File, GrayMe);
+        }
         Image_Preview_Set_Refresh(String_to_File);
     }
 

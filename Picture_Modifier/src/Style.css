@@ -1,0 +1,64 @@
+.root{
+    -fx-background-color: black;
+}
+
+.pane {
+    -fx-background-color: black;
+    -fx-border-color: black;
+}
+
+.label {
+    -fx-background-color: transparent; 
+    -fx-text-fill: yellow; 
+    -fx-font-size: 14px;
+}
+
+.button {
+    -fx-background-color: #21211E; 
+    -fx-text-fill: red; 
+    -fx-text-alignment: center;
+    -fx-font-size: 14px;
+}
+
+.text-field {
+    -fx-background-color: #21211E; 
+    -fx-text-fill: #B8AA15; 
+    -fx-text-alignment: center;
+    -fx-font-size: 14px;
+}
+
+.button:hover{
+
+        -fx-background-color:#323121;
+        -fx-text-alignment: center;
+}
+
+.slider .thumb{
+    -progress : 0.1;
+    -fx-background-color: #B8AA15;
+}
+
+.slider .track{
+    -progress : 0.1;
+    -fx-background-color: #21211E;
+}
+
+.check-box .box {
+    -fx-background-color: #21211E;
+}
+
+.check-box:hover .box {
+    -fx-background-color: #323121;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #21211E;
+}
+
+.check-box:hover:selected .box {
+    -fx-background-color: #323121;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: #B8AA15;
+}
