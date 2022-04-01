@@ -34,7 +34,7 @@ public class DataChooseFunction {
     private static FileChooser DataChoose;
     private static File DataVar;
     private static Button Button_PickFile, Button_For_Saving_The_Pic, Button_For_Exit, Button_Refresh_Pic;
-    private static Label sPath_Label, ThresDescription_Label, CheckBox_Label, Norm_Min_Label, Norm_Max_Label, NameDesc_Label, lbl_Live_Preview, lbl_Equal_Hist;
+    private static Label sPath_Label, ThresDescription_Label, CheckBox_Label, Norm_Min_Label, Norm_Max_Label, lbl_Save_Name, lbl_Live_Preview, lbl_Equal_Hist;
     private static boolean HasPic;
     private static boolean b_Is_ImageView_Setup = false;
     private static boolean b_Normalise_Picture = false;
@@ -45,15 +45,16 @@ public class DataChooseFunction {
     private static InputStream Stream_Input;
     private static ImageView Show_Image;
 
-    public static TextField NameGiver_txtField;
+    public static TextField txtfld_Save_Name_Giver;
     public static Slider Slider_Threshold, Slider_Norm_Min, Slider_Norm_Max;
     private static CheckBox Chkbx_Normalise, chkbx_Live_preview, chkbx_SW_Pic, chkbx_Equal_Hist;
     private static int Y_Pos = 20;
 
     private static final int i_Button_Min_Size = 50;
     private static int i_Button_Max_Size = 100;
-    private static double NameGiver_txtField_Width;
+    private static double d_Save_Name_Giver;
     private static double d_Screen_ABS_Resize, d_Temp_New_Size_Screen;
+    private static boolean b_SaveNameInMiddle = false;
 
     // Constructor of the Chooser
     public DataChooseFunction(){
@@ -61,7 +62,7 @@ public class DataChooseFunction {
         // Did the layout, window, already got created?
         if(!b_DataPickCriteria){
 
-            NameGiver_txtField_Width = Scene_FX_Pane.getWidth()/4;
+            d_Save_Name_Giver = Scene_FX_Pane.getWidth()/4;
 
             // Desc. for Input Label
             ThresDescription_Label = new Label();
@@ -250,16 +251,16 @@ public class DataChooseFunction {
             // ------------------------------------------------------------------------------------------------
 
             // The input field of how to name the Output File
-            NameGiver_txtField = new TextField("Test.png");
-            NameGiver_txtField.setPrefWidth(NameGiver_txtField_Width);
-            NameGiver_txtField.setLayoutX(Scene_FX_Pane.getWidth()/2-NameGiver_txtField_Width/2);
-            NameGiver_txtField.setLayoutY(Y_Pos-5);
+            txtfld_Save_Name_Giver = new TextField("Test.png");
+            txtfld_Save_Name_Giver.setPrefWidth(d_Save_Name_Giver);
+            txtfld_Save_Name_Giver.setLayoutX(Scene_FX_Pane.getWidth()/2- d_Save_Name_Giver /2);
+            txtfld_Save_Name_Giver.setLayoutY(Y_Pos-5);
 
             // Desc. for Save-Name Label
-            NameDesc_Label = new Label("Save Name");
-            NameDesc_Label.setPrefWidth(95);
-            NameDesc_Label.setLayoutY(Y_Pos);
-            NameDesc_Label.setLayoutX(NameGiver_txtField.getLayoutX()-115);
+            lbl_Save_Name = new Label("Save Name");
+            lbl_Save_Name.setPrefWidth(95);
+            lbl_Save_Name.setLayoutY(Y_Pos);
+            lbl_Save_Name.setLayoutX(txtfld_Save_Name_Giver.getLayoutX()-115);
 
             // ------------------------------------------------------------------------------------------------
 
@@ -435,9 +436,9 @@ public class DataChooseFunction {
             DataGroup_For_FXPane.getChildren().add(Button_For_Exit);
             DataGroup_For_FXPane.getChildren().add(sPath_Label);
             DataGroup_For_FXPane.getChildren().add(Slider_Threshold);
-            DataGroup_For_FXPane.getChildren().add(NameGiver_txtField);
+            DataGroup_For_FXPane.getChildren().add(txtfld_Save_Name_Giver);
             DataGroup_For_FXPane.getChildren().add(ThresDescription_Label);
-            DataGroup_For_FXPane.getChildren().add(NameDesc_Label);
+            DataGroup_For_FXPane.getChildren().add(lbl_Save_Name);
             DataGroup_For_FXPane.getChildren().add(Chkbx_Normalise);
             DataGroup_For_FXPane.getChildren().add(CheckBox_Label);
             DataGroup_For_FXPane.getChildren().add(lbl_Live_Preview);
@@ -553,7 +554,7 @@ public class DataChooseFunction {
         d_Temp_New_Size_Screen = Scene_FX_Pane.getWidth();
 
         if(d_Temp_New_Size_Screen < Window_Width) {
-            if(Button_PickFile.getLayoutX() > (NameGiver_txtField.getLayoutX()+NameGiver_txtField.getPrefWidth() + 10)) {
+            if(Button_PickFile.getLayoutX() > (txtfld_Save_Name_Giver.getLayoutX()+ txtfld_Save_Name_Giver.getPrefWidth() + 10)) {
                 Button_PickFile.setLayoutX(Button_PickFile.getLayoutX() - d_Screen_ABS_Resize);
             } else if (Button_PickFile.getPrefWidth() > i_Button_Min_Size) {
                 Button_PickFile.setPrefWidth(Button_PickFile.getPrefWidth() - d_Screen_ABS_Resize);
@@ -563,8 +564,8 @@ public class DataChooseFunction {
                 Button_For_Saving_The_Pic.setPrefWidth(Button_For_Saving_The_Pic.getPrefWidth() - d_Screen_ABS_Resize);
             } else if(Button_For_Exit.getPrefWidth() > i_Button_Min_Size){
                 Button_For_Exit.setPrefWidth(Button_For_Exit.getPrefWidth() - d_Screen_ABS_Resize);
-            } else if(NameGiver_txtField.getPrefWidth() > 100){
-                NameGiver_txtField.setPrefWidth(NameGiver_txtField.getPrefWidth() - d_Screen_ABS_Resize);
+            } else if(txtfld_Save_Name_Giver.getPrefWidth() > 100){
+                txtfld_Save_Name_Giver.setPrefWidth(txtfld_Save_Name_Giver.getPrefWidth() - d_Screen_ABS_Resize);
             }
             Button_Refresh_Pic.setLayoutX(Button_PickFile.getLayoutX() + Button_PickFile.getPrefWidth() + 10);
             Button_For_Saving_The_Pic.setLayoutX(Button_Refresh_Pic.getLayoutX() + Button_Refresh_Pic.getPrefWidth() + 10);
@@ -573,8 +574,8 @@ public class DataChooseFunction {
 
         if(d_Temp_New_Size_Screen > Window_Width){
             if(d_Temp_New_Size_Screen > Button_For_Exit.getLayoutX() + Button_For_Exit.getPrefWidth() + 10) {
-                if (NameGiver_txtField.getPrefWidth() < NameGiver_txtField_Width) {
-                    NameGiver_txtField.setPrefWidth(NameGiver_txtField.getPrefWidth() + d_Screen_ABS_Resize);
+                if (txtfld_Save_Name_Giver.getPrefWidth() < d_Save_Name_Giver) {
+                    txtfld_Save_Name_Giver.setPrefWidth(txtfld_Save_Name_Giver.getPrefWidth() + d_Screen_ABS_Resize);
                 } else if (Button_For_Exit.getPrefWidth() < i_Button_Max_Size) {
                     Button_For_Exit.setPrefWidth(Button_For_Exit.getPrefWidth() + d_Screen_ABS_Resize);
                 } else if (Button_For_Saving_The_Pic.getPrefWidth() < i_Button_Max_Size) {
@@ -589,7 +590,10 @@ public class DataChooseFunction {
                     Button_Refresh_Pic.setLayoutX(Button_For_Saving_The_Pic.getLayoutX() - Button_Refresh_Pic.getPrefWidth() - 10);
                     Button_PickFile.setLayoutX(Button_Refresh_Pic.getLayoutX() - Button_PickFile.getPrefWidth() - 10);
             }
+        }
 
+        if(b_SaveNameInMiddle){
+            lbl_Save_Name.setLayoutX(txtfld_Save_Name_Giver.getLayoutX()+txtfld_Save_Name_Giver.getPrefWidth()/2-lbl_Save_Name.getPrefWidth());
         }
 
         Window_Width = d_Temp_New_Size_Screen;
@@ -603,12 +607,17 @@ public class DataChooseFunction {
         Button_For_Saving_The_Pic.setLayoutX(Button_For_Exit.getLayoutX()-i_Button_Max_Size-10);
         if(Button_For_Saving_The_Pic.getLayoutX()+Button_For_Saving_The_Pic.getPrefWidth()+10 > Button_For_Exit.getLayoutX()){
             double difference = Button_For_Exit.getLayoutX() - (Button_For_Saving_The_Pic.getLayoutX()+Button_For_Saving_The_Pic.getPrefWidth()+10);
-            NameGiver_txtField.setPrefWidth(NameGiver_txtField.getPrefWidth() - difference - 10);
+            txtfld_Save_Name_Giver.setPrefWidth(txtfld_Save_Name_Giver.getPrefWidth() - difference - 10);
             Button_For_Exit.setLayoutX(Scene_FX_Pane.getWidth()-i_Button_Max_Size-10);
             Button_For_Saving_The_Pic.setLayoutX(Button_For_Exit.getLayoutX()-i_Button_Max_Size-10);
             Button_Refresh_Pic.setLayoutX(Button_For_Saving_The_Pic.getLayoutX()-i_Button_Max_Size-10);
             Button_PickFile.setLayoutX(Button_Refresh_Pic.getLayoutX()-i_Button_Max_Size-10);
 
+        }
+        if(lbl_Save_Name.getLayoutX() < Slider_Threshold.getLayoutX()+Slider_Threshold.getPrefWidth()) {
+            lbl_Save_Name.setLayoutX(txtfld_Save_Name_Giver.getLayoutX()+txtfld_Save_Name_Giver.getPrefWidth()/2-lbl_Save_Name.getPrefWidth());
+                lbl_Save_Name.setLayoutY(lbl_Save_Name.getLayoutY()+30);
+                b_SaveNameInMiddle = true;
         }
     }
     /*
@@ -644,12 +653,12 @@ public class DataChooseFunction {
         Saves the modified image.
      */
     private static void Save_Modified_Image(Mat GrayMe){
-        String SaveFileName = NameGiver_txtField.getText();
+        String SaveFileName = txtfld_Save_Name_Giver.getText();
         if(!SaveFileName.toUpperCase(Locale.ROOT).contains("TEMPPIC")) {
-            SaveFileName = StringTEST_And_Prepare(NameGiver_txtField.getText());
+            SaveFileName = StringTEST_And_Prepare(txtfld_Save_Name_Giver.getText());
         } else {
-            NameGiver_txtField.setText("TempPic_as_name_Not_allowed.png");
-            SaveFileName = StringTEST_And_Prepare(NameGiver_txtField.getText());
+            txtfld_Save_Name_Giver.setText("TempPic_as_name_Not_allowed.png");
+            SaveFileName = StringTEST_And_Prepare(txtfld_Save_Name_Giver.getText());
         }
 
         Imgcodecs.imwrite(SaveFileName, GrayMe);
