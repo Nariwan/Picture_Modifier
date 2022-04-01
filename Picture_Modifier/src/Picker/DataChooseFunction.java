@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.util.Locale;
 
 import static Picker.Main.Scene_FX_Pane;
+import static Picker.Main.Window_Width;
 
 
 public class DataChooseFunction {
@@ -47,8 +48,12 @@ public class DataChooseFunction {
     public static TextField NameGiver_txtField;
     public static Slider Slider_Threshold, Slider_Norm_Min, Slider_Norm_Max;
     private static CheckBox Chkbx_Normalise, chkbx_Live_preview, chkbx_SW_Pic, chkbx_Equal_Hist;
-    private static double NameGiver_txtField_Width;
     private static int Y_Pos = 20;
+
+    private static final int i_Button_Min_Size = 50;
+    private static int i_Button_Max_Size = 100;
+    private static double NameGiver_txtField_Width;
+    private static double d_Screen_ABS_Resize, d_Temp_New_Size_Screen;
 
     // Constructor of the Chooser
     public DataChooseFunction(){
@@ -291,13 +296,80 @@ public class DataChooseFunction {
             // ------------------------------------------------------------------------------------------------
 
             /*
+                Creation, and setup, for the exit button.
+             */
+            Button_For_Exit = new Button();
+            Button_For_Exit.setText("Exit");
+            Button_For_Exit.setPrefWidth(i_Button_Max_Size);
+            Button_For_Exit.setLayoutX(Scene_FX_Pane.getWidth()-i_Button_Max_Size-10);
+            Button_For_Exit.setLayoutY(Y_Pos-5);
+
+            /*
+                If clicked -> Exit
+             */
+            Button_For_Exit.setOnAction(event -> System.exit(0));
+
+            // ------------------------------------------------------------------------------------------------
+
+                        /*
+                Here the button with the modify function
+                gets created, and arranged in the Pane.
+             */
+            Button_For_Saving_The_Pic = new Button();
+            Button_For_Saving_The_Pic.setText("Save");
+            Button_For_Saving_The_Pic.setPrefWidth(i_Button_Max_Size);
+            Button_For_Saving_The_Pic.setLayoutX(Button_For_Exit.getLayoutX()-i_Button_Max_Size-10);
+            Button_For_Saving_The_Pic.setLayoutY(Y_Pos-5);
+
+            /*
+                What happens, if the Modify button gets clicked?
+                Well..
+                It checks again, if there's a picture available ( Might be
+                redundant, but just to make sure. ), and then it starts the
+                entire modifying process.
+             */
+            Button_For_Saving_The_Pic.setOnAction(event -> {
+
+                // Wenn der Button gedrückt wird, erscheint das Dateiauswahlfenster.
+                if (!HasPic) {
+                    System.out.println("No Pic.");
+                } else {
+                    Yay(DataVar);
+                }
+            });
+
+            // ------------------------------------------------------------------------------------------------
+
+             /*
+                Here the button with the refresh the Image.
+                It only appears, if Live Preview is not active
+             */
+            Button_Refresh_Pic = new Button();
+            Button_Refresh_Pic.setText("Refresh");
+            Button_Refresh_Pic.setPrefWidth(i_Button_Max_Size);
+            Button_Refresh_Pic.setLayoutX(Button_For_Saving_The_Pic.getLayoutX()-i_Button_Max_Size-10);
+            Button_Refresh_Pic.setLayoutY(Y_Pos-5);
+
+            /*
+                Once clicked, it calls the Just_Modify method with
+                the current Data Path, to modify it.
+             */
+            Button_Refresh_Pic.setOnAction(event -> {
+                // Wenn der Button gedrückt wird, erscheint das Dateiauswahlfenster.
+                if (HasPic) {
+                    Just_Modify(Imgcodecs.imread(DataVar.getAbsolutePath()));
+                }
+            });
+            // ------------------------------------------------------------------------------------------------
+
+            /*
                 The button, and boolean, for the File picker.
              */
             HasPic = false;
             Button_PickFile = new Button();
             Button_PickFile.setText("Pick Image");
-            Button_PickFile.setPrefWidth(130);
-            Button_PickFile.setLayoutX((NameGiver_txtField.getLayoutX()+NameGiver_txtField_Width+20));
+            Button_PickFile.setPrefWidth(i_Button_Max_Size+30);
+            Button_PickFile.setLayoutX(Button_Refresh_Pic.getLayoutX()-(i_Button_Max_Size+30)-10);
             Button_PickFile.setLayoutY(Y_Pos-5);
 
             /*
@@ -332,70 +404,6 @@ public class DataChooseFunction {
 
             // ------------------------------------------------------------------------------------------------
 
-            /*
-                Here the button with the modify function
-                gets created, and arranged in the Pane.
-             */
-            Button_For_Saving_The_Pic = new Button();
-            Button_For_Saving_The_Pic.setText("Save");
-            Button_For_Saving_The_Pic.setPrefWidth(100);
-            Button_For_Saving_The_Pic.setLayoutX(Scene_FX_Pane.getWidth()-240);
-            Button_For_Saving_The_Pic.setLayoutY(Y_Pos-5);
-
-            /*
-                What happens, if the Modify button gets clicked?
-                Well..
-                It checks again, if there's a picture available ( Might be
-                redundant, but just to make sure. ), and then it starts the
-                entire modifying process.
-             */
-            Button_For_Saving_The_Pic.setOnAction(event -> {
-
-                // Wenn der Button gedrückt wird, erscheint das Dateiauswahlfenster.
-                if (!HasPic) {
-                    System.out.println("No Pic.");
-                } else {
-                    Yay(DataVar);
-                }
-            });
-
-            // ------------------------------------------------------------------------------------------------
-
-            /*
-                Creation, and setup, for the exit button.
-             */
-            Button_For_Exit = new Button();
-            Button_For_Exit.setText("Exit");
-            Button_For_Exit.setPrefWidth(100);
-            Button_For_Exit.setLayoutX(Scene_FX_Pane.getWidth()-120);
-            Button_For_Exit.setLayoutY(Y_Pos-5);
-
-            /*
-                If clicked -> Exit
-             */
-            Button_For_Exit.setOnAction(event -> System.exit(0));
-
-             /*
-                Here the button with the refresh the Image.
-                It only appears, if Live Preview is not active
-             */
-            Button_Refresh_Pic = new Button();
-            Button_Refresh_Pic.setText("Refresh");
-            Button_Refresh_Pic.setPrefWidth(100);
-            Button_Refresh_Pic.setLayoutX(Button_PickFile.getLayoutX()+150);
-            Button_Refresh_Pic.setLayoutY(Y_Pos-5);
-
-            /*
-                Once clicked, it calls the Just_Modify method with
-                the current Data Path, to modify it.
-             */
-            Button_Refresh_Pic.setOnAction(event -> {
-                // Wenn der Button gedrückt wird, erscheint das Dateiauswahlfenster.
-                if (HasPic) {
-                    Just_Modify(Imgcodecs.imread(DataVar.getAbsolutePath()));
-                }
-            });
-            // ------------------------------------------------------------------------------------------------
 
             // Desc. for the CheckBox of Live_Preview
             lbl_Equal_Hist = new Label("Equalise Histogram");
@@ -443,6 +451,7 @@ public class DataChooseFunction {
         // In the end we add the DataGroup to the Pane.
         Scene_FX_Pane.getChildren().add(DataGroup_For_FXPane);
 
+        Quick_Size_Check();
 
     }
 
@@ -536,21 +545,72 @@ public class DataChooseFunction {
     /*
         Resizes, and relocates, the elements in the window,
         once the window gets resized.
+        First time doing something like this.. there might be better ways
      */
     public static void Window_Is_resized(){
-        NameGiver_txtField_Width = Scene_FX_Pane.getWidth()/4;
 
-        Button_For_Exit.setLayoutX(Scene_FX_Pane.getWidth()-120);
-        Button_For_Saving_The_Pic.setLayoutX(Scene_FX_Pane.getWidth()-240);
-        Button_PickFile.setLayoutX((NameGiver_txtField.getLayoutX()+NameGiver_txtField_Width+20));
-        Button_Refresh_Pic.setLayoutX(Button_PickFile.getLayoutX()+150);
+        d_Screen_ABS_Resize = Math.abs(Scene_FX_Pane.getWidth() - Window_Width);
+        d_Temp_New_Size_Screen = Scene_FX_Pane.getWidth();
 
-        NameGiver_txtField.setPrefWidth(NameGiver_txtField_Width);
-        NameGiver_txtField.setLayoutX(Scene_FX_Pane.getWidth()/2-NameGiver_txtField_Width/2);
-        NameDesc_Label.setLayoutX(NameGiver_txtField.getLayoutX()-115);
+        if(d_Temp_New_Size_Screen < Window_Width) {
+            if(Button_PickFile.getLayoutX() > (NameGiver_txtField.getLayoutX()+NameGiver_txtField.getPrefWidth() + 10)) {
+                Button_PickFile.setLayoutX(Button_PickFile.getLayoutX() - d_Screen_ABS_Resize);
+            } else if (Button_PickFile.getPrefWidth() > i_Button_Min_Size) {
+                Button_PickFile.setPrefWidth(Button_PickFile.getPrefWidth() - d_Screen_ABS_Resize);
+            } else if (Button_Refresh_Pic.getPrefWidth() > i_Button_Min_Size) {
+                Button_Refresh_Pic.setPrefWidth(Button_Refresh_Pic.getPrefWidth() - d_Screen_ABS_Resize);
+            }  else if (Button_For_Saving_The_Pic.getPrefWidth() > i_Button_Min_Size) {
+                Button_For_Saving_The_Pic.setPrefWidth(Button_For_Saving_The_Pic.getPrefWidth() - d_Screen_ABS_Resize);
+            } else if(Button_For_Exit.getPrefWidth() > i_Button_Min_Size){
+                Button_For_Exit.setPrefWidth(Button_For_Exit.getPrefWidth() - d_Screen_ABS_Resize);
+            } else if(NameGiver_txtField.getPrefWidth() > 100){
+                NameGiver_txtField.setPrefWidth(NameGiver_txtField.getPrefWidth() - d_Screen_ABS_Resize);
+            }
+            Button_Refresh_Pic.setLayoutX(Button_PickFile.getLayoutX() + Button_PickFile.getPrefWidth() + 10);
+            Button_For_Saving_The_Pic.setLayoutX(Button_Refresh_Pic.getLayoutX() + Button_Refresh_Pic.getPrefWidth() + 10);
+            Button_For_Exit.setLayoutX(Button_For_Saving_The_Pic.getLayoutX() + Button_For_Saving_The_Pic.getPrefWidth() + 10);
+        }
+
+        if(d_Temp_New_Size_Screen > Window_Width){
+            if(d_Temp_New_Size_Screen > Button_For_Exit.getLayoutX() + Button_For_Exit.getPrefWidth() + 10) {
+                if (NameGiver_txtField.getPrefWidth() < NameGiver_txtField_Width) {
+                    NameGiver_txtField.setPrefWidth(NameGiver_txtField.getPrefWidth() + d_Screen_ABS_Resize);
+                } else if (Button_For_Exit.getPrefWidth() < i_Button_Max_Size) {
+                    Button_For_Exit.setPrefWidth(Button_For_Exit.getPrefWidth() + d_Screen_ABS_Resize);
+                } else if (Button_For_Saving_The_Pic.getPrefWidth() < i_Button_Max_Size) {
+                    Button_For_Saving_The_Pic.setPrefWidth(Button_For_Saving_The_Pic.getPrefWidth() + d_Screen_ABS_Resize);
+                } else if (Button_Refresh_Pic.getPrefWidth() < i_Button_Max_Size) {
+                    Button_Refresh_Pic.setPrefWidth(Button_Refresh_Pic.getPrefWidth() + d_Screen_ABS_Resize);
+                } else if (Button_PickFile.getPrefWidth() < i_Button_Max_Size) {
+                    Button_PickFile.setPrefWidth(Button_PickFile.getPrefWidth() + d_Screen_ABS_Resize);
+                }
+                    Button_For_Exit.setLayoutX(d_Temp_New_Size_Screen - Button_For_Exit.getPrefWidth() - 10);
+                    Button_For_Saving_The_Pic.setLayoutX(Button_For_Exit.getLayoutX() - Button_For_Saving_The_Pic.getPrefWidth() - 10);
+                    Button_Refresh_Pic.setLayoutX(Button_For_Saving_The_Pic.getLayoutX() - Button_Refresh_Pic.getPrefWidth() - 10);
+                    Button_PickFile.setLayoutX(Button_Refresh_Pic.getLayoutX() - Button_PickFile.getPrefWidth() - 10);
+            }
+
+        }
+
+        Window_Width = d_Temp_New_Size_Screen;
         Resize_Pic_Place();
     }
 
+
+    private static void Quick_Size_Check(){
+        d_Temp_New_Size_Screen = Scene_FX_Pane.getWidth();
+        Button_For_Exit.setLayoutX(Scene_FX_Pane.getWidth()-i_Button_Max_Size-10);
+        Button_For_Saving_The_Pic.setLayoutX(Button_For_Exit.getLayoutX()-i_Button_Max_Size-10);
+        if(Button_For_Saving_The_Pic.getLayoutX()+Button_For_Saving_The_Pic.getPrefWidth()+10 > Button_For_Exit.getLayoutX()){
+            double difference = Button_For_Exit.getLayoutX() - (Button_For_Saving_The_Pic.getLayoutX()+Button_For_Saving_The_Pic.getPrefWidth()+10);
+            NameGiver_txtField.setPrefWidth(NameGiver_txtField.getPrefWidth() - difference - 10);
+            Button_For_Exit.setLayoutX(Scene_FX_Pane.getWidth()-i_Button_Max_Size-10);
+            Button_For_Saving_The_Pic.setLayoutX(Button_For_Exit.getLayoutX()-i_Button_Max_Size-10);
+            Button_Refresh_Pic.setLayoutX(Button_For_Saving_The_Pic.getLayoutX()-i_Button_Max_Size-10);
+            Button_PickFile.setLayoutX(Button_Refresh_Pic.getLayoutX()-i_Button_Max_Size-10);
+
+        }
+    }
     /*
         A short Function which just resizes the Picture
      */

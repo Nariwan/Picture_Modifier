@@ -16,12 +16,13 @@ public class Main extends Application {
     public static Window Window_FX_Var;
     public static Scene Scene_FX_Var;
     public static Pane Scene_FX_Pane;
+    public static double Window_Height, Window_Width;
 
     @Override
     public void start(Stage primaryStage) {
 
-        double Window_Height = (2*Screen.getPrimary().getBounds().getHeight())/3;
-        double Window_Width = (2*Screen.getPrimary().getBounds().getWidth())/3;
+        Window_Height = (2*Screen.getPrimary().getBounds().getHeight())/3;
+        Window_Width = (2*Screen.getPrimary().getBounds().getWidth())/3;
 
         primaryStage.setTitle("Picture Modifier!");
         // OpenCV Startup thing
