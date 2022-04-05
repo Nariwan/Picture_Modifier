@@ -1,8 +1,8 @@
 # Picture_Modifier
 Self written Java application which converts coloured pictures to binary pictures via OpenCV.
-Before :
+<br/>Before :
 ![Pic_Before](https://raw.githubusercontent.com/Nariwan/Picture_Modifier/main/Pic_Before.png)
-After :
+<br/>After :
 ![Preview](https://raw.githubusercontent.com/Nariwan/Picture_Modifier/main/Preview.png)
 
 # What is required?
