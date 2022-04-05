@@ -17,7 +17,7 @@ possible to name the outcome file.
 It's in the folder of the project. 
 <br/>For Linux : "/home/'UserName'/"Project Folder"/Picture_Modifier"
 <br/>For Windows : "\\"Path to project Folder"\Picture_Modifier"
-<br/>("C:\User\\'UserName'\Ideaprojects\Pocture_Modifier") <- as example
+<br/>("C:\User\\'UserName'\Ideaprojects\Picture_Modifier") <- as example
 <br/>For mac :
 <br/>Don't own one, so don't know.
 
