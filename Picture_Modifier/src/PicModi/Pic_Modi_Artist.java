@@ -39,8 +39,10 @@ public class Pic_Modi_Artist {
     }
 
     /*
-                The Yay Method! ( I keep calling them Functions )
-                The Method reads the File into the TestMat and checks
+                The Yay Function!
+                ( I'll keep calling them Functions, even if they're
+                 called Methods, I know.. )
+                The Function reads the File into the TestMat and checks
                 if the TestMat is empty ( Just to make sure there's no
                 NULL-Mat )
                 Then it starts the Modify_And_Save method.
@@ -99,7 +101,7 @@ public class Pic_Modi_Artist {
     }
 
     /*
-        This Method is for re-freshing, and setting, the imageview.
+        This Function is for re-freshing, and setting, the imageview.
         Input is the File
      */
 
@@ -127,7 +129,7 @@ public class Pic_Modi_Artist {
     }
 
     /*
-        Method for Normalise the Picture
+        Function for Normalise the Picture
      */
     public Mat Normalise_The_Mat(Mat Mat_To_Norm){
         Mat BufferMat = new Mat();
@@ -136,7 +138,7 @@ public class Pic_Modi_Artist {
     }
 
     /*
-        Method for Equalise the Histogram the Picture
+        Function for Equalise the Histogram the Picture
      */
     public Mat Equal_The_Mat(Mat Mat_To_Norm){
         Mat BufferMat = new Mat();
@@ -159,7 +161,7 @@ public class Pic_Modi_Artist {
     }
 
     /*
-        A Method which modifies the savefile name.
+        A Function which modifies the savefile name.
         How does it do that?
         Well, let's say the input strung is "Test.txt", the
         ZumTest checks if a . is present, if so it takes the "Test"
@@ -240,7 +242,7 @@ public class Pic_Modi_Artist {
         return Show_Image;
     }
 
-    // Boolean IS Methods
+    // Boolean IS Functions
     public boolean isB_Is_ImageView_Setup() {
         return b_Is_ImageView_Setup;
     }

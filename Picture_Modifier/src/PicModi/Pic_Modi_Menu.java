@@ -286,7 +286,7 @@ public class Pic_Modi_Menu {
             // ------------------------------------------------------------------------------------------------
 
             /*
-                The button, and boolean, for the File picker.
+                The button and boolean, for the File picker.
              */
             HasPic = false;
             Button_PickFile = new Button();
@@ -388,8 +388,8 @@ public class Pic_Modi_Menu {
         in_this_group.getChildren().remove(chkbx_SW_Pic);
     }
 
-    // Once the Panel is resized, this Method
-    // calls the Methods to refreshe the menu.
+    // Once the Panel is resized, this Function
+    // calls the Functions to refreshe the menu.
     public static void refresh_menu(){
         if(b_DataPickMenuCreated) {
             children_remove(DataGroup_For_FXPane);
@@ -549,7 +549,7 @@ public class Pic_Modi_Menu {
         // ------------------------------------------------------------------------------------------------
 
             /*
-                The button, and boolean, for the File picker.
+                The button and boolean, for the File picker.
              */
         Button_PickFile.setPrefWidth(i_Button_Pref_Width);
         Button_PickFile.setPrefHeight(i_Menu_Obj_Pref_Height);
@@ -570,7 +570,6 @@ public class Pic_Modi_Menu {
             } else if(DataVar == null && !sPath_Label.getText().equals("NO FILE!!")) {
                 Resize_Pic_Place();
             } else {
-                //System.out.println(DataVar);
                 sPath_Label.setText(DataVar.toString());
                 sPath_Label.setLayoutX(Button_PickFile.getLayoutX() - d_Window_Width - i_x_equal_spacing);
                 sPath_Label.setLayoutY(Button_PickFile.getLayoutY());

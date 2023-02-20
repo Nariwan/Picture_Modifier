@@ -57,7 +57,7 @@ public class Main extends Application {
         Window_FX_Var.sizeToScene();
 
         refresh_menu();
-        // If the Windows is resized, call this Method
+        // If the Windows is resized, call this Function
         primaryStage.heightProperty().addListener((obs, oldVal,  newVal) -> {
             Pic_Modi_Menu.new_Pane_height((double) newVal - subtract);
             refresh_menu();
