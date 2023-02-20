@@ -5,14 +5,13 @@ package PicModi;
 
 import javafx.scene.Group;
 import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Screen;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import java.io.File;
-
-import static PicModi.Main.Scene_FX_Pane;
-import static PicModi.Main.Window_Width;
 
 
 public class Pic_Modi_Menu {
@@ -20,7 +19,7 @@ public class Pic_Modi_Menu {
     // Some variables, IntelliJ might gonna nag of some,
     // but that's okay.
 
-    public static boolean b_DataPickCriteria = false;
+    public static boolean b_DataPickMenuCreated = false;
     public static Group DataGroup_For_FXPane;
     public static FileChooser DataChoose;
     private static File DataVar;
@@ -37,21 +36,19 @@ public class Pic_Modi_Menu {
     private static final int i_y_equal_spacing = 10;
 
     private boolean b_Live_Preview = false;
-
-    private static final int i_Button_Min_Size = 50;
     private static int i_Button_Pref_Width = 120;
     private static int i_Menu_Obj_Pref_Height = 30;
     private static float f_Label_Pref_Width=0;
     private static double d_Button_X_Pos;
-    private static double d_Save_Name_Giver;
-    private static double d_Screen_ABS_Resize, d_Temp_New_Size_Screen;
+    private static double d_Window_Width;
     private static Pic_Modi_Artist Artist;
+    private static double pane_width, pane_height;
 
     // Constructor of the Chooser
-    public Pic_Modi_Menu(){
+    public Pic_Modi_Menu(Pane in_Pane){
 
         // Did the layout, window, already got created?
-        if(!b_DataPickCriteria){
+        if(!b_DataPickMenuCreated){
 
             // Desc. for Input Label
             ThresDescription_Label = new Label();
@@ -318,7 +315,7 @@ public class Pic_Modi_Menu {
                 } else {
                     //System.out.println(DataVar);
                     sPath_Label.setText(DataVar.toString());
-                    sPath_Label.setLayoutX(Button_PickFile.getLayoutX() - d_Save_Name_Giver - i_x_equal_spacing);
+                    sPath_Label.setLayoutX(Button_PickFile.getLayoutX() - d_Window_Width - i_x_equal_spacing);
                     sPath_Label.setLayoutY(Button_PickFile.getLayoutY());
                     Artist.Just_Modify(Imgcodecs.imread(DataVar.getAbsolutePath()));
                     HasPic = true;
@@ -345,19 +342,19 @@ public class Pic_Modi_Menu {
             // ------------------------------------------------------------------------------------------------
             // All the former created objects are being put into Group.
             DataGroup_For_FXPane = new Group();
-            refresh_menu();
 
-            b_DataPickCriteria = true;
+            b_DataPickMenuCreated = true;
         }
 
         // In the end we add the DataGroup to the Pane.
-        Scene_FX_Pane.getChildren().add(DataGroup_For_FXPane);
-
-        Quick_Size_Check();
+        in_Pane.getChildren().add(DataGroup_For_FXPane);
 
     }
 
 
+    /*
+        Just to add the children back into the group.
+     */
     private static void children_add(Group in_this_group){
         in_this_group.getChildren().add(Button_PickFile);
         in_this_group.getChildren().add(Button_For_Saving_The_Pic);
@@ -374,6 +371,7 @@ public class Pic_Modi_Menu {
         in_this_group.getChildren().add(chkbx_SW_Pic);
     }
 
+    // Just to remove the children from the group.
     private static void children_remove(Group in_this_group){
         in_this_group.getChildren().remove(Button_PickFile);
         in_this_group.getChildren().remove(Button_For_Saving_The_Pic);
@@ -390,8 +388,10 @@ public class Pic_Modi_Menu {
         in_this_group.getChildren().remove(chkbx_SW_Pic);
     }
 
+    // Once the Panel is resized, this Method
+    // calls the Methods to refreshe the menu.
     public static void refresh_menu(){
-        if(b_DataPickCriteria) {
+        if(b_DataPickMenuCreated) {
             children_remove(DataGroup_For_FXPane);
         }
         Window_Is_resized();
@@ -404,13 +404,19 @@ public class Pic_Modi_Menu {
         First time doing something like this.. there might be better ways
      */
     private static void Window_Is_resized(){
+        if(pane_width != Screen.getPrimary().getBounds().getWidth()) {
+            d_Window_Width = pane_width / 4;
+        } else {
+            d_Window_Width = pane_width;
+        }
 
-        d_Save_Name_Giver = Scene_FX_Pane.getWidth()/4;
-        i_Button_Pref_Width = (int)(Scene_FX_Pane.getWidth()*0.1);
+        i_Button_Pref_Width = (int)(pane_width*0.1);
         if(i_Button_Pref_Width > 120) {i_Button_Pref_Width = 120;}
-        d_Button_X_Pos = Scene_FX_Pane.getWidth() - i_Button_Pref_Width - i_x_equal_spacing;
+        d_Button_X_Pos = pane_width - i_Button_Pref_Width - i_x_equal_spacing;
+
         Y_Pos = i_Menu_Obj_Pref_Height/4.0f;
-        f_Label_Pref_Width = (float)(Scene_FX_Pane.getWidth()*0.1);
+        f_Label_Pref_Width = (float)(pane_width*0.1);
+
         if(f_Label_Pref_Width < 115){
             if(f_Label_Pref_Width < 80){
                 f_Label_Pref_Width=80;
@@ -566,7 +572,7 @@ public class Pic_Modi_Menu {
             } else {
                 //System.out.println(DataVar);
                 sPath_Label.setText(DataVar.toString());
-                sPath_Label.setLayoutX(Button_PickFile.getLayoutX() - d_Save_Name_Giver - i_x_equal_spacing);
+                sPath_Label.setLayoutX(Button_PickFile.getLayoutX() - d_Window_Width - i_x_equal_spacing);
                 sPath_Label.setLayoutY(Button_PickFile.getLayoutY());
                 Resize_Pic_Place();
             }
@@ -574,9 +580,9 @@ public class Pic_Modi_Menu {
         // ------------------------------------------------------------------------------------------------
 
         // The input field of how to name the Output File
-        txtfld_Save_Name_Giver.setPrefWidth(d_Save_Name_Giver);
+        txtfld_Save_Name_Giver.setPrefWidth(3*i_Button_Pref_Width);
         txtfld_Save_Name_Giver.setPrefHeight(i_Menu_Obj_Pref_Height);
-        txtfld_Save_Name_Giver.setLayoutX(Button_PickFile.getLayoutX() - d_Save_Name_Giver - i_x_equal_spacing);
+        txtfld_Save_Name_Giver.setLayoutX(Button_PickFile.getLayoutX() - (3*i_Button_Pref_Width) - i_x_equal_spacing);
         txtfld_Save_Name_Giver.setLayoutY(Button_For_Saving_The_Pic.getLayoutY());
 
         // ------------------------------------------------------------------------------------------------
@@ -585,48 +591,25 @@ public class Pic_Modi_Menu {
                 Here's the Label which tells the user, if a File got
                 chosen, and which file it is.
              */
-        sPath_Label.setPrefWidth(d_Save_Name_Giver);
+        sPath_Label.setPrefWidth(3*i_Button_Pref_Width);
         sPath_Label.setPrefHeight(i_Menu_Obj_Pref_Height);
-        sPath_Label.setLayoutX(Button_PickFile.getLayoutX() - d_Save_Name_Giver - i_x_equal_spacing);
+        sPath_Label.setLayoutX(Button_PickFile.getLayoutX() - (3*i_Button_Pref_Width) - i_x_equal_spacing);
         sPath_Label.setLayoutY(Button_PickFile.getLayoutY());
     }
 
-
-    private static void Quick_Size_Check(){
-        /*
-        d_Temp_New_Size_Screen = Scene_FX_Pane.getWidth();
-        Button_For_Exit.setLayoutX(Scene_FX_Pane.getWidth()- i_Button_Pref_Width -10);
-        Button_For_Saving_The_Pic.setLayoutX(Button_For_Exit.getLayoutX()- i_Button_Pref_Width -10);
-        if(Button_For_Saving_The_Pic.getLayoutX()+Button_For_Saving_The_Pic.getPrefWidth()+10 > Button_For_Exit.getLayoutX()){
-            double difference = Button_For_Exit.getLayoutX() - (Button_For_Saving_The_Pic.getLayoutX()+Button_For_Saving_The_Pic.getPrefWidth()+10);
-            txtfld_Save_Name_Giver.setPrefWidth(txtfld_Save_Name_Giver.getPrefWidth() - difference - 10);
-            Button_For_Exit.setLayoutX(Scene_FX_Pane.getWidth()- i_Button_Pref_Width -10);
-            Button_For_Saving_The_Pic.setLayoutX(Button_For_Exit.getLayoutX()- i_Button_Pref_Width -10);
-            Button_Refresh_Pic.setLayoutX(Button_For_Saving_The_Pic.getLayoutX()- i_Button_Pref_Width -10);
-            Button_PickFile.setLayoutX(Button_Refresh_Pic.getLayoutX()- i_Button_Pref_Width -10);
-
-        }
-        if(lbl_Save_Name.getLayoutX() < Slider_Threshold.getLayoutX()+Slider_Threshold.getPrefWidth()) {
-            lbl_Save_Name.setLayoutX(txtfld_Save_Name_Giver.getLayoutX()+txtfld_Save_Name_Giver.getPrefWidth()/2-lbl_Save_Name.getPrefWidth());
-                lbl_Save_Name.setLayoutY(lbl_Save_Name.getLayoutY()+30);
-                b_SaveNameInMiddle = true;
-        }
-
-         */
-    }
     /*
         A short Function which just resizes the Picture
      */
     private static void Resize_Pic_Place(){
         if(HasPic) {
-            Artist.getShow_Image().setFitHeight(Scene_FX_Pane.getHeight() - Artist.getShow_Image().getY() - 20);
-            Artist.getShow_Image().setFitWidth(Scene_FX_Pane.getWidth() - 40 - i_Button_Pref_Width);
+            Artist.getShow_Image().setFitHeight(pane_height - Artist.getShow_Image().getY() - 20);
+            Artist.getShow_Image().setFitWidth(pane_width - 40 - i_Button_Pref_Width);
         }
     }
 
-    public void setArtist(Pic_Modi_Artist arti){
+    public void setArtist(Pane in_Pane, Pic_Modi_Artist arti){
         Artist = arti;
-        Artist.setScene_pane(Scene_FX_Pane);
+        Artist.setScene_pane(in_Pane);
         Artist.setChild_group(DataGroup_For_FXPane);
         Artist.setSld_thres(Slider_Threshold);
         Artist.setSld_norm_min(Slider_Norm_Min);
@@ -634,5 +617,13 @@ public class Pic_Modi_Menu {
         Artist.setTxt_info(txtfld_Save_Name_Giver);
         Artist.setI_sub_from_imgview(i_Button_Pref_Width);
     }
-
+    public static void new_Pane_height(double new_Val){
+        pane_height = new_Val;
+    }
+    public static void new_Pane_width(double new_Val){
+        pane_width = new_Val;
+    }
+    public static int getI_x_equal_spacing(){
+        return i_x_equal_spacing;
+    }
 }
