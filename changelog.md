@@ -7,6 +7,13 @@ On the 3rd of March in 2022 this Project got uploaded.
 
 -- Changelog --
 
+15.06.2024 :
+- The Filechooser of picking an image will now remember the last place
+- Choosing a save location is now possible
+- Added a label for Feedback (Like if saving the image was successful)
+- Some re-naming of variables
+- Filestream was clinging on a file, now it won't anymore
+
 20.02.2023 :
 - Maximise button now working correctly
 - Some bug fixes with resizing 
