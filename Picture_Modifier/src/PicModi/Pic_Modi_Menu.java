@@ -3,6 +3,7 @@ package PicModi;
 
 // Imported Libraries
 
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
@@ -19,19 +20,19 @@ public class Pic_Modi_Menu {
     // Some variables, IntelliJ might gonna nag of some,
     // but that's okay.
 
-    public static boolean b_DataPickMenuCreated = false;
+    public static boolean bool_DataPickMenuCreated = false;
     public static Group DataGroup_For_FXPane;
-    public static FileChooser DataChoose;
-    private static File DataVar;
+    public static FileChooser fch_DataChoose;
+    private static File file_DataVar;
     private static Button Button_PickFile, Button_For_Saving_The_Pic, Button_For_Exit, Button_Refresh_Pic;
-    private static Label sPath_Label, ThresDescription_Label, CheckBox_Normalise_Label, Norm_Min_Label, Norm_Max_Label, lbl_Save_Name, lbl_Live_Preview, lbl_Equal_Hist;
-    public static boolean HasPic;
+    private static Label sPath_Label, ThresDescription_Label, CheckBox_Normalise_Label, Norm_Min_Label, Norm_Max_Label, lbl_Save_Name, lbl_Live_Preview, lbl_Equal_Hist, lbl_Feedback;
+    public static boolean bool_HasPic;
 
 
     public static TextField txtfld_Save_Name_Giver;
     public static Slider Slider_Threshold, Slider_Norm_Min, Slider_Norm_Max;
     private static CheckBox Chkbx_Normalise, chkbx_Live_preview, chkbx_SW_Pic, chkbx_Equal_Hist;
-    private static float Y_Pos;
+    private static float f_Y_Pos;
     private static final int i_x_equal_spacing = 15;
     private static final int i_y_equal_spacing = 10;
 
@@ -43,15 +44,17 @@ public class Pic_Modi_Menu {
     private static double d_Window_Width;
     private static Pic_Modi_Artist Artist;
     private static double pane_width, pane_height;
+    private String str_Last_Path;
 
     // Constructor of the Chooser
     public Pic_Modi_Menu(Pane in_Pane){
 
         // Did the layout, window, already got created?
-        if(!b_DataPickMenuCreated){
+        if(!bool_DataPickMenuCreated){
 
             // Desc. for Input Label
             ThresDescription_Label = new Label();
+            str_Last_Path = System.getProperty("user.home");
 
             // Setup for the B/W CheckBox
             chkbx_SW_Pic = new CheckBox();
@@ -66,8 +69,8 @@ public class Pic_Modi_Menu {
             // Event Handler for the B/W Checkbox
             chkbx_SW_Pic.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
                 Artist.switch_B_SW_Pic();
-                if(HasPic){
-                    Artist.Image_Refresh(DataVar, b_Live_Preview);
+                if(bool_HasPic){
+                    Artist.Image_Refresh(file_DataVar, b_Live_Preview);
                 }
                 if(Artist.isB_SW_Pic()){
                     DataGroup_For_FXPane.getChildren().add(lbl_Equal_Hist);
@@ -80,8 +83,8 @@ public class Pic_Modi_Menu {
 
             // Event Handler for the Threshold Slider
             Slider_Threshold.valueProperty().addListener((observable, oldValue, newValue) -> {
-                if(HasPic){
-                    Artist.Image_Refresh(DataVar, b_Live_Preview);
+                if(bool_HasPic){
+                    Artist.Image_Refresh(file_DataVar, b_Live_Preview);
                 }
                 ThresDescription_Label.setText("Threshold : "+ String.format("%.2f",Slider_Threshold.getValue()));
             });
@@ -99,8 +102,8 @@ public class Pic_Modi_Menu {
             // Event Handler for the Checkbox for Live_Preview
             chkbx_Live_preview.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
                 b_Live_Preview = !b_Live_Preview;
-                if(HasPic) {
-                    Artist.Image_Refresh(DataVar, b_Live_Preview);
+                if(bool_HasPic) {
+                    Artist.Image_Refresh(file_DataVar, b_Live_Preview);
                 }
                 if (b_Live_Preview) {
                     DataGroup_For_FXPane.getChildren().remove(Button_Refresh_Pic);
@@ -120,8 +123,8 @@ public class Pic_Modi_Menu {
             // Event Handler for the Checkbox for Live_Preview
             chkbx_Equal_Hist.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
                 Artist.switch_B_equal_hist();
-                if(HasPic) {
-                    Artist.Image_Refresh(DataVar, b_Live_Preview);
+                if(bool_HasPic) {
+                    Artist.Image_Refresh(file_DataVar, b_Live_Preview);
                 }
             });
 
@@ -136,8 +139,8 @@ public class Pic_Modi_Menu {
             // Event Handler for the Checkbox
             Chkbx_Normalise.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
                 Artist.switch_B_Normalise_Picture();
-                if(HasPic){
-                    Artist.Image_Refresh(DataVar, b_Live_Preview);
+                if(bool_HasPic){
+                    Artist.Image_Refresh(file_DataVar, b_Live_Preview);
                 }
                 if(Artist.isB_Normalise_Picture()){
                     DataGroup_For_FXPane.getChildren().add(Norm_Max_Label);
@@ -169,8 +172,8 @@ public class Pic_Modi_Menu {
                 if(Slider_Norm_Min.getValue() >= Slider_Norm_Max.getValue()){
                     Slider_Norm_Max.setValue(Slider_Norm_Min.getValue()+1);
                 }
-                if(HasPic){
-                    Artist.Image_Refresh(DataVar, b_Live_Preview);
+                if(bool_HasPic){
+                    Artist.Image_Refresh(file_DataVar, b_Live_Preview);
                 }
                 Norm_Min_Label.setText("Min : "+ String.format("%.2f",Slider_Norm_Min.getValue()));
             });
@@ -194,8 +197,8 @@ public class Pic_Modi_Menu {
                 if(Slider_Norm_Min.getValue() >= Slider_Norm_Max.getValue()){
                     Slider_Norm_Min.setValue(Slider_Norm_Max.getValue()-1);
                 }
-                if(HasPic){
-                    Artist.Image_Refresh(DataVar, b_Live_Preview);
+                if(bool_HasPic){
+                    Artist.Image_Refresh(file_DataVar, b_Live_Preview);
                 }
                 Norm_Max_Label.setText("Max : "+ String.format("%.2f",Slider_Norm_Max.getValue()));
             });
@@ -209,9 +212,9 @@ public class Pic_Modi_Menu {
                 After this some restrictions which kind of
                 Data is allowed.
             */
-            DataChoose = new FileChooser();
+            fch_DataChoose = new FileChooser();
 
-            DataChoose.getExtensionFilters().addAll(
+            fch_DataChoose.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("*", "*.jpg","*.jpeg","*.JPG","*.JPEG","*.png","*.gif","*.bmp","*.tiff"),
                     new FileChooser.ExtensionFilter("JPG", "*.jpg","*.JPG"),
                     new FileChooser.ExtensionFilter("JPEG", "*.jpeg","*.JPEG"),
@@ -221,7 +224,7 @@ public class Pic_Modi_Menu {
                     new FileChooser.ExtensionFilter("TIFF", "*.tiff")
             );
 
-            DataChoose.setInitialDirectory(new File(System.getProperty("user.home")));
+            fch_DataChoose.setInitialDirectory(new File(str_Last_Path));
 
             // ------------------------------------------------------------------------------------------------
 
@@ -251,8 +254,8 @@ public class Pic_Modi_Menu {
              */
             Button_Refresh_Pic.setOnAction(event -> {
                 // Wenn der Button gedrückt wird, erscheint das Dateiauswahlfenster.
-                if (HasPic) {
-                    Artist.Just_Modify(Imgcodecs.imread(DataVar.getAbsolutePath()));
+                if (bool_HasPic) {
+                    Artist.Just_Modify(Imgcodecs.imread(file_DataVar.getAbsolutePath()));
                 }
             });
 
@@ -276,19 +279,53 @@ public class Pic_Modi_Menu {
             Button_For_Saving_The_Pic.setOnAction(event -> {
 
                 // Wenn der Button gedrückt wird, erscheint das Dateiauswahlfenster.
-                if (!HasPic) {
-                    System.out.println("No Pic.");
+                if (!bool_HasPic) {
+                    lbl_Feedback.setText("NO Picture!");
+                    Platform.runLater(() -> {
+                        try {
+                            Thread.sleep(1000);
+                            lbl_Feedback.setText("");
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
                 } else {
-                    Artist.Yay(DataVar);
+                    if(Artist.Yay(file_DataVar) == 0)
+                    {
+                        lbl_Feedback.setText("Pic saved!");
+                        Platform.runLater(() -> {
+                            try {
+                                Thread.sleep(1000);
+                                lbl_Feedback.setText("");
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
+                    } else {
+                        lbl_Feedback.setText("Not saved!");
+                        Platform.runLater(() -> {
+                            try {
+                                Thread.sleep(1000);
+                                lbl_Feedback.setText("");
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
+                    }
                 }
             });
+
+            // ------------------------------------------------------------------------------------------------
+
+            lbl_Feedback = new Label("");
+            lbl_Feedback.setTextFill(Color.GREEN);
 
             // ------------------------------------------------------------------------------------------------
 
             /*
                 The button and boolean, for the File picker.
              */
-            HasPic = false;
+            bool_HasPic = false;
             Button_PickFile = new Button();
             Button_PickFile.setText("Pick Image");
 
@@ -302,23 +339,28 @@ public class Pic_Modi_Menu {
              */
             Button_PickFile.setOnAction(event -> {
 
-                DataVar = DataChoose.showOpenDialog(Main.Window_FX_Var);
-                if(DataVar == null && sPath_Label.getText().equals("NO FILE!!")) {
+                file_DataVar = fch_DataChoose.showOpenDialog(Main.Window_FX_Var);
+                lbl_Feedback.setText("");
+                if(file_DataVar == null && sPath_Label.getText().equals("NO FILE!!")) {
                     System.out.println("No File!");
                     sPath_Label.setText("NO FILE!!");
-                    HasPic = false;
-                } else if(DataVar == null && !sPath_Label.getText().equals("NO FILE!!")) {
-                    DataVar = new File(sPath_Label.getText());
-                    HasPic = true;
-                    Artist.Just_Modify(Imgcodecs.imread(DataVar.getAbsolutePath()));
+                    bool_HasPic = false;
+                } else if(file_DataVar == null && !sPath_Label.getText().equals("NO FILE!!")) {
+                    file_DataVar = new File(sPath_Label.getText());
+                    bool_HasPic = true;
+                    Artist.Just_Modify(Imgcodecs.imread(file_DataVar.getAbsolutePath()));
                     Resize_Pic_Place();
                 } else {
                     //System.out.println(DataVar);
-                    sPath_Label.setText(DataVar.toString());
+                    sPath_Label.setText(file_DataVar.toString());
                     sPath_Label.setLayoutX(Button_PickFile.getLayoutX() - d_Window_Width - i_x_equal_spacing);
                     sPath_Label.setLayoutY(Button_PickFile.getLayoutY());
-                    Artist.Just_Modify(Imgcodecs.imread(DataVar.getAbsolutePath()));
-                    HasPic = true;
+
+                    str_Last_Path = file_DataVar.getParent();
+                    fch_DataChoose.setInitialDirectory(new File(str_Last_Path));
+
+                    Artist.Just_Modify(Imgcodecs.imread(file_DataVar.getAbsolutePath()));
+                    bool_HasPic = true;
                     Resize_Pic_Place();
                 }
                 });
@@ -343,7 +385,7 @@ public class Pic_Modi_Menu {
             // All the former created objects are being put into Group.
             DataGroup_For_FXPane = new Group();
 
-            b_DataPickMenuCreated = true;
+            bool_DataPickMenuCreated = true;
         }
 
         // In the end we add the DataGroup to the Pane.
@@ -359,6 +401,7 @@ public class Pic_Modi_Menu {
         in_this_group.getChildren().add(Button_PickFile);
         in_this_group.getChildren().add(Button_For_Saving_The_Pic);
         in_this_group.getChildren().add(Button_For_Exit);
+        in_this_group.getChildren().add(lbl_Feedback);
         in_this_group.getChildren().add(sPath_Label);
         in_this_group.getChildren().add(Slider_Threshold);
         in_this_group.getChildren().add(txtfld_Save_Name_Giver);
@@ -376,6 +419,7 @@ public class Pic_Modi_Menu {
         in_this_group.getChildren().remove(Button_PickFile);
         in_this_group.getChildren().remove(Button_For_Saving_The_Pic);
         in_this_group.getChildren().remove(Button_For_Exit);
+        in_this_group.getChildren().remove(lbl_Feedback);
         in_this_group.getChildren().remove(sPath_Label);
         in_this_group.getChildren().remove(Slider_Threshold);
         in_this_group.getChildren().remove(txtfld_Save_Name_Giver);
@@ -391,7 +435,7 @@ public class Pic_Modi_Menu {
     // Once the Panel is resized, this Function
     // calls the Functions to refreshe the menu.
     public static void refresh_menu(){
-        if(b_DataPickMenuCreated) {
+        if(bool_DataPickMenuCreated) {
             children_remove(DataGroup_For_FXPane);
         }
         Window_Is_resized();
@@ -414,7 +458,7 @@ public class Pic_Modi_Menu {
         if(i_Button_Pref_Width > 120) {i_Button_Pref_Width = 120;}
         d_Button_X_Pos = pane_width - i_Button_Pref_Width - i_x_equal_spacing;
 
-        Y_Pos = i_Menu_Obj_Pref_Height/4.0f;
+        f_Y_Pos = i_Menu_Obj_Pref_Height/4.0f;
         f_Label_Pref_Width = (float)(pane_width*0.1);
 
         if(f_Label_Pref_Width < 115){
@@ -429,7 +473,7 @@ public class Pic_Modi_Menu {
         ThresDescription_Label.setPrefWidth(f_Label_Pref_Width);
         ThresDescription_Label.setPrefHeight(i_Menu_Obj_Pref_Height);
         ThresDescription_Label.setLayoutX(10);
-        ThresDescription_Label.setLayoutY(Y_Pos);
+        ThresDescription_Label.setLayoutY(f_Y_Pos);
 
         // Setup for the B/W CheckBox
         chkbx_SW_Pic.setPrefWidth(5);
@@ -441,7 +485,7 @@ public class Pic_Modi_Menu {
         Slider_Threshold.setPrefWidth(285);
         Slider_Threshold.setPrefHeight(i_Menu_Obj_Pref_Height);
         Slider_Threshold.setLayoutX(chkbx_SW_Pic.getLayoutX()+10+i_x_equal_spacing);
-        Slider_Threshold.setLayoutY(Y_Pos);
+        Slider_Threshold.setLayoutY(f_Y_Pos);
 
         // ------------------------------------------------------------------------------------------------
 
@@ -477,7 +521,7 @@ public class Pic_Modi_Menu {
         CheckBox_Normalise_Label.setPrefWidth(f_Label_Pref_Width);
         CheckBox_Normalise_Label.setPrefHeight(i_Menu_Obj_Pref_Height);
         CheckBox_Normalise_Label.setLayoutX(10);
-        CheckBox_Normalise_Label.setLayoutY(Y_Pos+i_Menu_Obj_Pref_Height+i_y_equal_spacing);
+        CheckBox_Normalise_Label.setLayoutY(f_Y_Pos +i_Menu_Obj_Pref_Height+i_y_equal_spacing);
 
         // Setup for the CheckBox
         Chkbx_Normalise.setPrefWidth(5);
@@ -491,7 +535,7 @@ public class Pic_Modi_Menu {
         Norm_Min_Label.setPrefWidth(100);
         Norm_Min_Label.setPrefHeight(i_Menu_Obj_Pref_Height);
         Norm_Min_Label.setLayoutX(Chkbx_Normalise.getLayoutX()+15+i_x_equal_spacing);
-        Norm_Min_Label.setLayoutY(Y_Pos+30);
+        Norm_Min_Label.setLayoutY(f_Y_Pos +30);
 
         // Slider to set the Min_Norm Value
         Slider_Norm_Min.setPrefWidth(170);
@@ -521,7 +565,18 @@ public class Pic_Modi_Menu {
         Button_For_Exit.setPrefWidth(i_Button_Pref_Width);
         Button_For_Exit.setPrefHeight(i_Menu_Obj_Pref_Height);
         Button_For_Exit.setLayoutX(d_Button_X_Pos);
-        Button_For_Exit.setLayoutY(Y_Pos+(4* i_Menu_Obj_Pref_Height)+i_x_equal_spacing);
+        Button_For_Exit.setLayoutY(f_Y_Pos +(4* i_Menu_Obj_Pref_Height)+i_x_equal_spacing);
+
+        // ------------------------------------------------------------------------------------------------
+
+            /*
+                Creation, and setup, for the Feedback Label.
+             */
+
+        lbl_Feedback.setPrefWidth(f_Label_Pref_Width);
+        lbl_Feedback.setPrefHeight(i_Menu_Obj_Pref_Height);
+        lbl_Feedback.setLayoutX(d_Button_X_Pos);
+        lbl_Feedback.setLayoutY(Button_For_Exit.getLayoutY() + 2* i_Menu_Obj_Pref_Height -i_x_equal_spacing);
 
         // ------------------------------------------------------------------------------------------------
 
@@ -564,13 +619,13 @@ public class Pic_Modi_Menu {
                 If it has something, it sets the sPath_Label to the
                 File-Path, and also remembers the path.
              */
-            if(DataVar == null && sPath_Label.getText().equals("NO FILE!!")) {
+            if(file_DataVar == null && sPath_Label.getText().equals("NO FILE!!")) {
                 sPath_Label.setText("NO FILE!!");
-                HasPic = false;
-            } else if(DataVar == null && !sPath_Label.getText().equals("NO FILE!!")) {
+                bool_HasPic = false;
+            } else if(file_DataVar == null && !sPath_Label.getText().equals("NO FILE!!")) {
                 Resize_Pic_Place();
             } else {
-                sPath_Label.setText(DataVar.toString());
+                sPath_Label.setText(file_DataVar.toString());
                 sPath_Label.setLayoutX(Button_PickFile.getLayoutX() - d_Window_Width - i_x_equal_spacing);
                 sPath_Label.setLayoutY(Button_PickFile.getLayoutY());
                 Resize_Pic_Place();
@@ -600,7 +655,7 @@ public class Pic_Modi_Menu {
         A short Function which just resizes the Picture
      */
     private static void Resize_Pic_Place(){
-        if(HasPic) {
+        if(bool_HasPic) {
             Artist.getShow_Image().setFitHeight(pane_height - Artist.getShow_Image().getY() - 20);
             Artist.getShow_Image().setFitWidth(pane_width - 40 - i_Button_Pref_Width);
         }

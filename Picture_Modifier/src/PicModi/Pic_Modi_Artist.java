@@ -6,20 +6,20 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Window;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Locale;
 
 public class Pic_Modi_Artist {
 
-    private static InputStream instream;
     private static Pane scene_pane;
     private static Group child_group;
 
@@ -27,15 +27,18 @@ public class Pic_Modi_Artist {
     private static boolean b_SW_Pic = false;
     private static boolean b_equal_hist = false;
     private static boolean b_Is_ImageView_Setup = false;
-    private static ImageView Show_Image;
+    private static ImageView imview_Show_Image;
 
     private static Slider sld_thres, sld_norm_min, sld_norm_max;
     private static TextField txt_info;
 
     private static int i_sub_from_imgview = 0;
+    private static Window win_Artplace;
+    private String str_Last_Folder_Path;
 
-    public Pic_Modi_Artist(){
-
+    public Pic_Modi_Artist(Window in_stage){
+        win_Artplace = in_stage;
+        str_Last_Folder_Path = System.getProperty("user.home");
     }
 
     /*
@@ -50,13 +53,15 @@ public class Pic_Modi_Artist {
                 Why 'Yay'? Well, for some reason it made me go "Yay" after
                 I made it work.
              */
-    public void Yay(File Data){
+    public int Yay(File Data){
         Mat TestMat;
         TestMat = Imgcodecs.imread(Data.getAbsolutePath());
         if(!TestMat.empty()){
             Just_Modify(TestMat);
             Save_Modified_Image(TestMat);
+            return 0;
         }
+        return 1;
     }
     /*
         Copy of Yay, just for Threshold refresh
@@ -107,25 +112,27 @@ public class Pic_Modi_Artist {
 
     public void Image_Preview_Set_Refresh(String Data) {
         try {
-            instream = new FileInputStream(Data);
+            InputStream fs_instream = new FileInputStream(Data);
+
             if (!b_Is_ImageView_Setup) {
-                System.out.println("Setting up!");
-                Show_Image = new ImageView();
-                Show_Image.setX(20);
-                Show_Image.setY(100);
-                Show_Image.setFitHeight(scene_pane.getHeight()-Show_Image.getY()-20);
-                Show_Image.setFitWidth(scene_pane.getWidth()-40-i_sub_from_imgview);
-                Show_Image.setPreserveRatio(true);
+                imview_Show_Image = new ImageView();
+                imview_Show_Image.setX(20);
+                imview_Show_Image.setY(100);
+                imview_Show_Image.setFitHeight(scene_pane.getHeight()- imview_Show_Image.getY()-20);
+                imview_Show_Image.setFitWidth(scene_pane.getWidth()-40-i_sub_from_imgview);
+                imview_Show_Image.setPreserveRatio(true);
                 b_Is_ImageView_Setup = true;
-                child_group.getChildren().add(Show_Image);
+                child_group.getChildren().add(imview_Show_Image);
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+
+            child_group.getChildren().remove(imview_Show_Image);
+            Image displayed_Image = new Image(fs_instream);
+            imview_Show_Image.setImage(displayed_Image);
+            child_group.getChildren().add(imview_Show_Image);
+            fs_instream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        child_group.getChildren().remove(Show_Image);
-        Image displayed_Image = new Image(instream);
-        Show_Image.setImage(displayed_Image);
-        child_group.getChildren().add(Show_Image);
     }
 
     /*
@@ -151,13 +158,21 @@ public class Pic_Modi_Artist {
      */
     public void Save_Modified_Image(Mat GrayMe){
         String SaveFileName = txt_info.getText();
+        DirectoryChooser dirch = new DirectoryChooser();
+        dirch.setTitle("Save Folder");
+        dirch.setInitialDirectory(new File(str_Last_Folder_Path));
+
+        str_Last_Folder_Path = dirch.showDialog(win_Artplace).toString() + "\\";
+
         if (SaveFileName.toUpperCase(Locale.ROOT).contains("TEMPPIC")) {
             txt_info.setText("TempPic_as_name_Not_allowed.png");
         }
         SaveFileName = StringTEST_And_Prepare(txt_info.getText());
 
-        Imgcodecs.imwrite(SaveFileName, GrayMe);
-        Image_Preview_Set_Refresh(SaveFileName);
+        if(Files.isDirectory(Paths.get(str_Last_Folder_Path))){
+            Imgcodecs.imwrite(str_Last_Folder_Path + SaveFileName, GrayMe);
+            Image_Preview_Set_Refresh(str_Last_Folder_Path + SaveFileName);
+        }
     }
 
     /*
@@ -239,7 +254,7 @@ public class Pic_Modi_Artist {
     }
     // Getters
     public ImageView getShow_Image() {
-        return Show_Image;
+        return imview_Show_Image;
     }
 
     // Boolean IS Functions
