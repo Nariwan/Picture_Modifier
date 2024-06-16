@@ -17,12 +17,7 @@ With this short application, someone is able to convert picture into binary ( B/
 possible to name the outcome file.
 
 # Where is the outcome file?
-It's in the folder of the project. 
-<br/>For Linux : "/home/'UserName'/"Project Folder"/Picture_Modifier"
-<br/>For Windows : "\\"Path to project Folder"\Picture_Modifier"
-<br/>("C:\User\\'UserName'\Ideaprojects\Picture_Modifier") <- as example
-<br/>For mac :
-<br/>Don't own one, so don't know.
+It's possible to choose the saved location, so pick it yourself.
 
 # Used IDE
   Don't know if this is needed, yet it has been written in IntelliJ.
